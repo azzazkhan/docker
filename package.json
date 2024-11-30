@@ -1,0 +1,13 @@
+{
+    "name": "docker-production",
+    "version": "1.0.0",
+    "repository": "git@gitlab.azzaz.dev:docker/production.git",
+    "author": "Azzaz Khan <hello@azzaz.dev>",
+    "license": "MIT",
+    "scripts": {
+        "format": "prettier --write ."
+    },
+    "devDependencies": {
+        "prettier": "^3.4.1"
+    }
+}

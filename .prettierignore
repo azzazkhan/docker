@@ -1,0 +1,4 @@
+node_modules
+vendor
+volumes
+!volumes/traefik/traefik.yml
