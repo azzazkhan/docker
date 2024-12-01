@@ -5,10 +5,16 @@ services:
         restart: always
         ports:
             - '80:80'
+            - '443:443'
+        environment:
+            CF_DNS_API_TOKEN: ${CLOUDFLARE_TOKEN}
+            TRAEFIK_CERTIFICATESRESOLVERS_cloudflare_ACME_EMAIL: ${LETS_ENCRYPT_EMAIL}
         volumes:
             - ./volumes/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
             - ./volumes/traefik/dynamic:/etc/traefik/dynamic:ro
-            - ./volumes/traefik/access.log:/var/log/traefik/access.log
+            - ./volumes/traefik/access.log:/var/log/traefik/access.log:rw
+            - ./volumes/traefik/traefik.log:/var/log/traefik/traefik.log:rw
+            - ./volumes/traefik/certs:/etc/traefik/certs:rw
             - /var/run/docker.sock:/var/run/docker.sock:ro
         networks:
             - traefik
@@ -16,7 +22,9 @@ services:
             - traefik.enable=true
             - traefik.http.routers.traefik-dashboard.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
             - traefik.http.routers.traefik-dashboard.service=api@internal
-            - traefik.http.routers.traefik-dashboard.entrypoints=web
+            - traefik.http.routers.traefik-dashboard.entrypoints=websecure
+            - traefik.http.routers.traefik-dashboard.tls=true
+            - traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt
             - traefik.http.routers.traefik-dashboard.middlewares=traefik-dashboard-auth
             - traefik.http.middlewares.traefik-dashboard-auth.basicauth.users=${TRAEFIK_BASIC_AUTH}
 
@@ -33,7 +41,9 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.portainer.rule=Host(`${PORTAINER_HOST:-portainer.localhost}`)
-            - traefik.http.routers.portainer.entrypoints=web
+            - traefik.http.routers.portainer.entrypoints=websecure
+            - traefik.http.routers.portainer.tls=true
+            - traefik.http.routers.portainer.tls.certresolver=letsencrypt
             - traefik.http.services.portainer-service.loadbalancer.server.port=9000
             - traefik.http.routers.portainer.middlewares=portainer-auth
             - traefik.http.middlewares.portainer-auth.basicauth.users=${PORTAINER_BASIC_AUTH}
@@ -93,7 +103,9 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.mailpit.rule=Host(`${MAILPIT_HOST:-mailpit.localhost}`)
-            - traefik.http.routers.mailpit.entrypoints=web
+            - traefik.http.routers.mailpit.entrypoints=websecure
+            - traefik.http.routers.mailpit.tls=true
+            - traefik.http.routers.mailpit.tls.certresolver=letsencrypt
             - traefik.http.services.mailpit-service.loadbalancer.server.port=8025
             - traefik.http.routers.mailpit.middlewares=mailpit-auth
             - traefik.http.middlewares.mailpit-auth.basicauth.users=${MAILPIT_BASIC_AUTH}
@@ -115,7 +127,9 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.phpmyadmin.rule=Host(`${PMA_HOST:-phpmyadmin.localhost}`)
-            - traefik.http.routers.phpmyadmin.entrypoints=web
+            - traefik.http.routers.phpmyadmin.entrypoints=websecure
+            - traefik.http.routers.phpmyadmin.tls=true
+            - traefik.http.routers.phpmyadmin.tls.certresolver=letsencrypt
             - traefik.http.services.phpmyadmin-service.loadbalancer.server.port=80
             - traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-auth
             - traefik.http.middlewares.phpmyadmin-auth.basicauth.users=${PMA_BASIC_AUTH}
@@ -136,7 +150,9 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.soketi.rule=Host(`${SOKETI_HOST:-soketi.localhost}`)
-            - traefik.http.routers.soketi.entrypoints=web
+            - traefik.http.routers.soketi.entrypoints=websecure
+            - traefik.http.routers.soketi.tls=true
+            - traefik.http.routers.soketi.tls.certresolver=letsencrypt
             - traefik.http.routers.soketi.service=soketi-service
             - traefik.http.services.soketi-service.loadbalancer.server.port=6001
             # - traefik.http.routers.soketi-metrics.rule=Host(`${SOKETI_METRICS_HOST:-metrics.soketi.localhost}`)

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+set -eu
+
 # Pull latest version of all images
 docker compose -f docker-compose.yml pull
 

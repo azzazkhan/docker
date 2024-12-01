@@ -3,23 +3,60 @@ global:
     sendAnonymousUsage: false
 
 log:
-    level: debug
+    level: WARN
+    format: common
+    filePath: /var/log/traefik/traefik.log
 
 api:
     dashboard: true
+    disableDashboardAd: true
     insecure: true
 
 entryPoints:
     web:
         address: :80
+        http:
+            redirections:
+                entryPoint:
+                    to: websecure
+                    scheme: https
+
+    websecure:
+        address: :443
 
 accessLog:
+    format: common
     filePath: /var/log/traefik/access.log
+
+tls:
+    stores:
+        default: {}
+
+certificatesResolvers:
+    letsencrypt:
+        acme:
+            # Configured dynamically through environment variables
+            # email: no-reply@localhost
+            storage: /etc/traefik/certs/acme.json
+            # httpChallenge:
+            #     entryPoint: web
+            # tlsChallenge: {}
+            # DNS challenge is required for issuing wildcard certificates
+            dnsChallenge:
+                provider: cloudflare
+                delayBeforeCheck: 10s
+                resolvers:
+                  # Cloudflare DNS
+                  - "1.1.1.1:53"
+                  - "1.0.0.1:53"
+                  # Google Public DNS
+                  - "8.8.8.8:53"
+                  - "8.8.4.4:53"
 
 providers:
     docker:
         endpoint: 'unix:///var/run/docker.sock'
-        defaultRule: Host(`{{ normalize .Name }}.azzaz.dev`)
+        defaultRule: Host(`{{ normalize .Name }}.localhost`)
         exposedByDefault: false
         network: traefik
 

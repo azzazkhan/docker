@@ -17,9 +17,25 @@ if [[ ! -f .env ]]; then
     echo "✅ Created default environment configuration file"
 fi
 
-# Create access log for Traefik as Docker mount point
+# Create common log file for Traefik as Docker mount point
+if [[ ! -f volumes/traefik/traefik.log ]]; then
+    touch volumes/traefik/traefik.log
+
+    echo "✅ Created Traefik system log file"
+fi
+
+# Create access log file for Traefik as Docker mount point
 if [[ ! -f volumes/traefik/access.log ]]; then
     touch volumes/traefik/access.log
 
     echo "✅ Created Traefik access log file"
 fi
+
+# Create file for storing generated SSL certificates
+if [[ ! -f volumes/traefik/certs/acme.json ]]; then
+    touch volumes/traefik/certs/acme.json
+
+    echo "✅ Created Traefik SSL certificates store"
+fi
+
+sudo chmod 600 volumes/traefik/certs/acme.json
