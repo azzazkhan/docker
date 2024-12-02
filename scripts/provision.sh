@@ -247,7 +247,7 @@ systemctl enable supervisor.service && service supervisor start
 
 # Add cron entry for auto removing dangling images
 
-echo "0 0 * * * /usr/bin/docker image prune -f" | crontab -u deployer -
+echo "0 0 * * * /usr/bin/docker image prune --all --force" | crontab -u deployer -
 
 # Configure max open file limit for custom user
 
