@@ -105,7 +105,7 @@ services:
         container_name: phpmyadmin
         restart: always
         environment:
-            PMA_ABSOLUTE_URI: http://${PMA_HOST:-phpmyadmin.localhost}
+            PMA_ABSOLUTE_URI: https://${PMA_HOST:-phpmyadmin.localhost}
             PMA_HOST: mysql
             PMA_PMADB: phpmyadmin
             PMA_CONTROLUSER: pma
