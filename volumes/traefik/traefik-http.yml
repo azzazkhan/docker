@@ -1,0 +1,32 @@
+global:
+    checkNewVersion: true
+    sendAnonymousUsage: false
+
+log:
+    level: WARN
+    format: common
+    filePath: /var/log/traefik/traefik.log
+
+api:
+    dashboard: true
+    disableDashboardAd: true
+    insecure: true
+
+entryPoints:
+    web:
+        address: :80
+
+accessLog:
+    format: common
+    filePath: /var/log/traefik/access.log
+
+providers:
+    docker:
+        endpoint: 'unix:///var/run/docker.sock'
+        defaultRule: Host(`{{ normalize .Name }}.localhost`)
+        exposedByDefault: false
+        network: traefik
+
+    file:
+        directory: /etc/traefik/dynamic
+        watch: true
